@@ -1,0 +1,197 @@
+@sidebarWidth: 200px;
+@navHeight: 44px;
+
+.view {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+}
+
+.view > .container {
+  flex: 1;
+  background-color: #ffffff;
+  padding: 20px 10px 10px 10px;
+  overflow: auto;
+}
+
+.view > .viewWrap {
+  width: @sidebarWidth;
+  background-color: #404040;
+  display: flex;
+  flex-direction: column;
+}
+
+.view > .viewWrap > .sidebar {
+  overflow: auto;
+  flex: 1;
+}
+
+.view > .viewWrap > .sidebar > .searchGithub {
+  padding: 10px;
+  background-color: #1c6a79;
+  border: 3px solid #2a9fb4;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  color: #ffffff;
+  font-size: 16px;
+}
+
+.view > .viewWrap > .sidebar > .siderbarSwitch {
+  padding: 10px;
+  background-color: #1c6a79;
+  border: 3px solid #2a9fb4;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  color: #ffffff;
+  font-size: 16px;
+}
+
+.view > .viewWrap > .userinfo {
+  height: @navHeight;
+  background-color: #2aa8bd;
+  display: flex;
+  justify-content: center;
+}
+
+.view > .viewWrap > .userinfo > .userinfoContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+}
+
+.view > .viewWrap > .userinfo > .userinfoContainer > .img {
+  width: 30px;
+  height: 30px;
+  border-style: none;
+}
+
+.view > .viewWrap > .userinfo > .userinfoContainer > .text {
+  display: inline-block;
+  color: #ffffff;
+  font-size: 22px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  margin-left: 10px;
+  max-width: ~"calc(100% - 50px)";
+}
+
+.view > .container > .tabpane {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  //flex: 1;
+}
+
+.view > .container > .tabpane .ant-tabs-content, .ant-tabs-content-animated {
+  height: 100%;
+}
+
+.paneContainer {
+  background-color: #eeeeee;
+  height: 100%;
+  overflow: auto;
+  border-radius: 4px;
+  //flex:1;
+}
+
+.contentHead {
+  margin-top: 10px;
+  display: flex;
+  //align-content: space-around;
+}
+
+.contentBody {
+  margin: 10px 10px 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.contentBody > .contributors {
+  display: inline-block;
+  flex: 1;
+  border-radius: 4px;
+  background-color: white;
+  padding: 4px 10px 8px;
+}
+.contentBody > .contributors > .ant-tag, .ant-tag a, .ant-tag a:hover{
+  margin: 4px 4px 4px;
+}
+.contentBody > .contributors > .ant-tag:hover {
+  background-color: #0d3a41;
+}
+.contentBody > .contributors >   .ant-tag-text:hover {
+  color: #ff0059;
+}
+.contentBody > .description {
+  margin-top: 10px;
+}
+
+.contentHead > .leftFloat {
+  flex: 1;
+  margin-left: 10px;
+}
+
+.contentHead > .rightFloat {
+  display: inline-flex;
+  //position: relative;
+  float: right;
+  margin-right: 10px;
+}
+
+.contentHead .ant-btn-group {
+  display: flex;
+  margin: 0px 4px;
+}
+
+.ant-switch-checked {
+  background-color: #2a9fb4;
+}
+
+::-webkit-scrollbar {
+  width: 2px;
+  height: 2px;
+  background-color: rgba(255, 255, 255, 1);
+}
+
+::-webkit-scrollbar-track {
+  background-color: rgb(255, 255, 255);
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 2px;
+  background-color: rgb(42, 168, 189);
+}
+
+.gitItem {
+  height: auto;
+  padding-left: 10px;
+  padding-right: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  color: #eeeeee;
+  font-size: 20px;
+  text-align: left;
+}
+
+.ant-menu-item-selected {
+  color: rgb(255, 255, 255);
+}
+
+.ant-menu-item:hover, .ant-menu-item-active, .ant-menu:not(.ant-menu-inline) .ant-menu-submenu-open, .ant-menu-submenu-active, .ant-menu-submenu-title:hover {
+  color: rgba(255, 255, 255, 0.86);
+  background-color: #1f7281;
+}
+
+.ant-menu-item:active, .ant-menu-submenu-title:active {
+  color: rgb(155, 155, 155);
+  background-color: rgb(24, 109, 119);
+}
+
+.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
+  background-color: rgba(42, 168, 189, 0.8);
+}
