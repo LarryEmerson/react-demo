@@ -1,3 +1,29 @@
+```
+注：github_oauth_access_token.php 文件需要挂在后台服务端（目前在根目录, 可自寻代码修改路径）
+```
+
+项目本身是自己对react+antd的学习与运用，以github为题材，使用官方提供的api，根据拉去的数据做了取舍并设计了界面。
+
+###已完成
+- [x] 根据antd官网的项目构建方法，构建项目。[构建方法](https://ant.design/docs/react/use-with-create-react-app-cn) 
+- [x] 完成界面架构：
+ - [x] 侧边栏：头部（用户昵称+搜索用户），主体为repo列表展示
+ - [x] 主体展示界面（使用[Tabs](https://ant.design/components/tabs-cn/)）
+- [x] github 用户[授权登录](https://my.oschina.net/diamondfsd/blog/893917?utm_source=tuicool&utm_medium=referral)
+- [x] github 用户搜索
+- [x] github 用户repo列表拉取
+- [x] repo数据展示
+ - [ ] 顶部状态按钮 （逻辑未完成）
+ - [ ] 贡献者 （逻辑未完成）
+ - [ ] 后续内容 （设计中...）
+
+
+ 
+## 华丽的分割线 
+（以下是构建项目自动构建的README.md内容）
+## ^
+
+
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
 Below you will find some information on how to perform common tasks.<br>
@@ -1899,3 +1925,5 @@ This will only work for locales that have been explicitly imported before.
 ## Something Missing?
 
 If you have ideas for more “How To” recipes that should be on this page, [let us know](https://github.com/facebookincubator/create-react-app/issues) or [contribute some!](https://github.com/facebookincubator/create-react-app/edit/master/packages/react-scripts/template/README.md)
+
+
