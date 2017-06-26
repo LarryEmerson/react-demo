@@ -6,12 +6,57 @@
   width: 100vw;
   height: 100vh;
 }
-
+.view > .login {
+  position: fixed;
+  float: right;
+  border-radius: 25px;
+  width: 50px;
+  height: 50px;
+  background-color: deepskyblue;
+  color: white;
+  border-width: 2px;
+  border-color: cornsilk;
+  border-style: dotted;
+  right: 4px;
+  top: 1px;
+  font-size: 22px;
+  display: flex;
+  justify-content: center;
+}
+.view > .login img, Icon {
+  width: 36px;
+  //height: 30px;
+}
+.view > .login:hover {
+  opacity: 0.8;
+}
+.view > .login:active {
+  color: #005470;
+}
 .view > .container {
   flex: 1;
   background-color: #ffffff;
   padding: 20px 10px 10px 10px;
   overflow: auto;
+}
+
+.verticalCenterModal {
+  text-align: center;
+  white-space: nowrap;
+}
+.verticalCenterModal:before {
+  content: '';
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+  width: 0;
+}
+
+.verticalCenterModal .ant-modal {
+  display: inline-block;
+  vertical-align: middle;
+  top: 0;
+  text-align: left;
 }
 
 .view > .viewWrap {
@@ -35,6 +80,22 @@
   justify-content: space-around;
   color: #ffffff;
   font-size: 16px;
+}
+
+.view > .viewWrap > .sidebar > .searchGithub input {
+  //border: none;
+  border-radius: 4px 0px 0px 4px;
+  border-color: #2a9fb4 transparent #2a9fb4 #2a9fb4;
+}
+
+.view > .viewWrap > .sidebar > .searchGithub button {
+  border-radius: 0px 4px 4px 0px;
+  border-color: #2a9fb4 #2a9fb4 #2a9fb4 transparent;
+}
+
+.view > .viewWrap > .sidebar > .searchGithub .ant-select-auto-complete.ant-select .ant-select-selection {
+  border-radius: 4px 0px 0px 4px;
+
 }
 
 .view > .viewWrap > .sidebar > .siderbarSwitch {
@@ -91,7 +152,7 @@
 }
 
 .paneContainer {
-  background-color: #eeeeee;
+  background-color: cornsilk;
   height: 100%;
   overflow: auto;
   border-radius: 4px;
@@ -111,21 +172,48 @@
 }
 
 .contentBody > .contributors {
-  display: inline-block;
-  flex: 1;
-  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
   background-color: white;
   padding: 4px 10px 8px;
+  border-radius: 4px;
+  //flex: 1;
 }
-.contentBody > .contributors > .ant-tag, .ant-tag a, .ant-tag a:hover{
-  margin: 4px 4px 4px;
+
+.contentBody > .contributors > .tags {
+  //margin: 4px 6px;
+  //height: 36px;
+  display: flex;
+  flex-wrap: wrap;
 }
-.contentBody > .contributors > .ant-tag:hover {
-  background-color: #0d3a41;
+
+.contentBody > .contributors > .tags > .tag {
+  display: flex;
+  margin: 4px 6px;
+  padding: 4px 10px;
+  height: 32px;
+  align-items: center;
+  justify-content: space-around;
+  background-color: #eeeeee;
+  border-radius: 5px;
+  color: #eeeeee;
+  font-size: 10px;
 }
-.contentBody > .contributors >   .ant-tag-text:hover {
-  color: #ff0059;
+
+.contentBody > .contributors > .tags > .tag:hover {
+  opacity: 0.5;
 }
+
+.contentBody > .contributors > .tags > .tag:active {
+  opacity: 0.8;
+}
+
+.contentBody > .contributors > .tags .tag > .avatar {
+  width: 26px;
+  height: 26px;
+  margin-right: 4px;
+}
+
 .contentBody > .description {
   margin-top: 10px;
 }
@@ -154,11 +242,11 @@
 ::-webkit-scrollbar {
   width: 2px;
   height: 2px;
-  background-color: rgba(255, 255, 255, 1);
+  background-color: rgb(22, 76, 87);
 }
 
 ::-webkit-scrollbar-track {
-  background-color: rgb(255, 255, 255);
+  background-color: rgb(20, 79, 89);
 }
 
 ::-webkit-scrollbar-thumb {
