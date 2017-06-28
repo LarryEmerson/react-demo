@@ -6,6 +6,7 @@
   width: 100vw;
   height: 100vh;
 }
+
 .view > .login {
   position: fixed;
   float: right;
@@ -23,17 +24,21 @@
   display: flex;
   justify-content: center;
 }
+
 .view > .login img, Icon {
   width: 36px;
   //height: 36px;
   border-radius: 18px;
 }
+
 .view > .login:hover {
   opacity: 0.8;
 }
+
 .view > .login:active {
   color: #005470;
 }
+
 .view > .container {
   flex: 1;
   background-color: #ffffff;
@@ -45,6 +50,7 @@
   text-align: center;
   white-space: nowrap;
 }
+
 .verticalCenterModal:before {
   content: '';
   display: inline-block;
@@ -231,6 +237,21 @@
   margin-right: 10px;
 }
 
+.popoverContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex: 1;
+  padding: 6px 12px;
+  border-bottom-color: #eeeeee;
+  border-width: 0px 0px 1px 0px;
+  border-style: solid;
+}
+.popoverContainer img, icon{
+    width: 36px;
+    height: 36px;
+}
+
 .contentHead .ant-btn-group {
   display: flex;
   margin: 0px 4px;
@@ -252,7 +273,7 @@
 
 ::-webkit-scrollbar-thumb {
   border-radius: 2px;
-  background-color: rgb(42, 168, 189);
+  background-color: darkorange;
 }
 
 .gitItem {

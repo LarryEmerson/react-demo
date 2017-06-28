@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import './App.less';
-import {Menu, Dropdown, Icon, Switch, Tabs, Button, AutoComplete, message} from 'antd';
+import {Menu, Dropdown, Icon, Switch, Tabs, Button, AutoComplete, message, Popover} from 'antd';
 const TabPane = Tabs.TabPane;
 const ButtonGroup = Button.Group;
 const GithubHost = 'https://github.com'
@@ -25,6 +25,9 @@ class App extends Component {
             contributors: [],//contributors of current selected repo
             searchHistory: [],//successfully serched github usernames
             readme: "",
+            forks: [],
+            stargazers: [],
+            subscribers: [],
             access_token: undefined,//current access_token for api calling
             loginLoading: undefined,//is login status
         }
@@ -138,10 +141,63 @@ class App extends Component {
         })
     }
 
+    getStargazers(url) {
+        let context = this;
+        fetch(url, {
+            method: "GET"
+        }).then(function (res) {
+            if (res.status == 200) {
+                res.json().then(function (json) {
+                    context.setState({stargazers: json})
+                })
+            } else {
+                context.setState({stargazers: []})
+            }
+        }).catch(function (error) {
+            context.setState({stargazers: []})
+        })
+    }
+
+    getFork(url) {
+        let context = this;
+        fetch(url, {
+            method: "GET"
+        }).then(function (res) {
+            if (res.status == 200) {
+                res.json().then(function (json) {
+                    context.setState({forks: json})
+                })
+            } else {
+                context.setState({forks: []})
+            }
+        }).catch(function (error) {
+            context.setState({forks: []})
+        })
+    }
+
+    getWatchers(url) {
+        let context = this;
+        fetch(url, {
+            method: "GET"
+        }).then(function (res) {
+            if (res.status == 200) {
+                res.json().then(function (json) {
+                    context.setState({subscribers: json})
+                })
+            } else {
+                context.setState({subscribers: []})
+            }
+        }).catch(function (error) {
+            context.setState({subscribers: []})
+        })
+    }
+
+    // downloads_url
     handleRepoClick(item, key, keyPath) {//handle repo clicked from repolist
-        const panes = this.state.panes;
+        let context = this;
+        const panes = context.state.panes;
         const activeKey = item.key;
-        var repo = this.state.repos.filter(function (element, index, array) {
+        var repo = context.state.repos.filter(function (element, index, array) {
             return element.id == activeKey;
         });
         if (repo.length > 0) {
@@ -151,13 +207,16 @@ class App extends Component {
             return element.key == activeKey
         })
         if (exist) {
-            this.setState({activeKey});
+            context.setState({activeKey});
         } else if (repo) {
             panes.push({title: repo.name, content: repo.description, key: activeKey});
-            this.setState({panes, activeKey});
+            context.setState({panes, activeKey});
         }
-        this.getRepoContributors(repo.contributors_url)
-        this.getRepoReadme(repo.contents_url)
+        context.getRepoContributors(repo.contributors_url+"?access_token="+context.state.access_token)
+        context.getRepoReadme(repo.contents_url+"?access_token="+context.state.access_token)
+        context.getStargazers(repo.stargazers_url+"?access_token="+context.state.access_token)
+        context.getFork(repo.forks_url+"?access_token="+context.state.access_token)
+        context.getWatchers(repo.url+"/watchers"+"?access_token="+context.state.access_token)
     }
 
     reversalColor(a) {//get reversal color with color
@@ -361,6 +420,7 @@ class App extends Component {
             // console.log(repo, repo.description, repo.name)
             return (
                 <div className='paneContainer'>
+
                     <div className="contentHead">
                         <div className="leftFloat">
                             <ButtonGroup>
@@ -369,18 +429,69 @@ class App extends Component {
                             </ButtonGroup>
                         </div>
                         <div className="rightFloat">
-                            <ButtonGroup>
-                                <Button icon="eye">Watch</Button>
-                                <Button type="primary">{repo.watchers_count}</Button>
-                            </ButtonGroup>
-                            <ButtonGroup>
-                                <Button icon="star">Star</Button>
-                                <Button type="primary">{repo.stargazers_count}</Button>
-                            </ButtonGroup>
-                            <ButtonGroup>
-                                <Button icon="fork">Fork</Button>
-                                <Button type="primary">{repo.forks_count}</Button>
-                            </ButtonGroup>
+                            <Popover
+                                placement="topRight"
+                                title="Title" trigger="click"
+                                content={
+                                    context.state.subscribers.map(function (item) {
+                                        return <div
+                                            className="popoverContainer"
+                                            key={item.id}
+                                            onClick={context.goToGithubUser.bind(context, item)}
+                                        >
+                                            <img className="avatar" src={item.avatar_url} alt=""/>
+                                            {item.login}
+                                        </div>
+                                    })
+                                }
+                            >
+                                <ButtonGroup>
+                                    <Button icon="eye">Watch</Button>
+                                    <Button type="primary">{repo.watchers_count}</Button>
+                                </ButtonGroup>
+                            </Popover>
+                            <Popover
+                                placement="topRight"
+                                title="Title" trigger="click"
+                                content={
+                                    context.state.stargazers.map(function (item) {
+                                        return <div
+                                            className="popoverContainer"
+                                            key={item.id}
+                                            onClick={context.goToGithubUser.bind(context, item)}
+                                        >
+                                            <img className="avatar" src={item.avatar_url} alt=""/>
+                                            {item.login}
+                                        </div>
+                                    })
+                                }
+                            >
+                                <ButtonGroup>
+                                    <Button icon="star">Star</Button>
+                                    <Button type="primary">{repo.stargazers_count}</Button>
+                                </ButtonGroup>
+                            </Popover>
+                            <Popover
+                                placement="topRight"
+                                title="Title" trigger="click"
+                                content={
+                                    context.state.forks.map(function (item) {
+                                        return <div
+                                            className="popoverContainer"
+                                            key={item.id}
+                                            onClick={context.goToGithubUser.bind(context, item)}
+                                        >
+                                            <img className="avatar" src={item.owner.avatar_url} alt=""/>
+                                            {item.owner.login}
+                                        </div>
+                                    })
+                                }
+                            >
+                                <ButtonGroup>
+                                    <Button icon="fork">Fork</Button>
+                                    <Button type="primary">{repo.forks_count}</Button>
+                                </ButtonGroup>
+                            </Popover>
                             <Button icon='download' style={{marginLeft: '4px'}}>Download</Button>
                         </div>
                     </div>
@@ -457,6 +568,7 @@ class App extends Component {
                     </div>
                 </div>
                 <div className="container">
+
                     <Tabs
                         className='tabpane'
                         hideAdd
@@ -468,8 +580,11 @@ class App extends Component {
                                 });
                                 if (repo.length > 0) {
                                     repo = repo[0]
-                                    context.getRepoContributors(repo.contributors_url)
-                                    context.getRepoReadme(repo.contents_url)
+                                    context.getRepoContributors(repo.contributors_url+"?access_token="+context.state.access_token)
+                                    context.getRepoReadme(repo.contents_url+"?access_token="+context.state.access_token)
+                                    context.getStargazers(repo.stargazers_url+"?access_token="+context.state.access_token)
+                                    context.getFork(repo.forks_url+"?access_token="+context.state.access_token)
+                                    context.getWatchers(repo.url+"/watchers"+"?access_token="+context.state.access_token)
                                 }
                             }
                         }
@@ -482,6 +597,7 @@ class App extends Component {
                         }
                         animated={{inkBar: true, tabPane: true}}
                     >
+
                         {this.state.panes.map(pane =>
                             <TabPane tab={pane.title}
                                      key={pane.key}>
