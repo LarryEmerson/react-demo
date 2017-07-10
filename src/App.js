@@ -1,4 +1,5 @@
-import React, {Component} from 'react';
+import React, {Component}from 'react';
+import 'antd/dist/antd.less'
 import './App.less';
 import {Menu, Dropdown, Icon, Switch, Tabs, Button, AutoComplete, message, Popover} from 'antd';
 const TabPane = Tabs.TabPane;
@@ -16,7 +17,7 @@ class App extends Component {
         super();
         this.state = {
             userInfo: undefined,//current user's info
-            loggedUserInfo: undefined,//current user's info
+            loggedUserInfo: undefined,//current logged user's info
             showUserInfoMenu: false,
             repos: [],//repos of current user
             enableForks: false,//show or hide current user's forked repos
@@ -30,6 +31,7 @@ class App extends Component {
             subscribers: [],
             access_token: undefined,//current access_token for api calling
             loginLoading: undefined,//is login status
+            repoSelected:undefined,
         }
         message.config({
             duration: 1.5
@@ -195,6 +197,7 @@ class App extends Component {
     // downloads_url
     handleRepoClick(item, key, keyPath) {//handle repo clicked from repolist
         let context = this;
+        context.state.repoSelected=undefined
         const panes = context.state.panes;
         const activeKey = item.key;
         var repo = context.state.repos.filter(function (element, index, array) {
@@ -203,6 +206,7 @@ class App extends Component {
         if (repo.length > 0) {
             repo = repo[0]
         }
+        context.setState({repoSelected:repo})
         var exist = this.state.panes.some(function (element, index, array) {
             return element.key == activeKey
         })
@@ -212,11 +216,21 @@ class App extends Component {
             panes.push({title: repo.name, content: repo.description, key: activeKey});
             context.setState({panes, activeKey});
         }
-        context.getRepoContributors(repo.contributors_url+"?access_token="+context.state.access_token)
-        context.getRepoReadme(repo.contents_url+"?access_token="+context.state.access_token)
-        context.getStargazers(repo.stargazers_url+"?access_token="+context.state.access_token)
-        context.getFork(repo.forks_url+"?access_token="+context.state.access_token)
-        context.getWatchers(repo.url+"/watchers"+"?access_token="+context.state.access_token)
+        context.getRepoContributors(repo.contributors_url
+            // + "?access_token=" + context.state.access_token
+        )
+        context.getRepoReadme(repo.contents_url
+            // + "?access_token=" + context.state.access_token
+        )
+        context.getStargazers(repo.stargazers_url
+            // + "?access_token=" + context.state.access_token
+        )
+        context.getFork(repo.forks_url
+            // + "?access_token=" + context.state.access_token
+        )
+        context.getWatchers(repo.url + "/watchers"
+            // + "?access_token=" + context.state.access_token
+        )
     }
 
     reversalColor(a) {//get reversal color with color
@@ -324,111 +338,172 @@ class App extends Component {
         }
     }
 
-    render() {
+    loginFloatBtn() {
         let context = this;
-        let loginFloatBtn = () => {//the floating login btn locating at the top right corner
-            return (
-                <Dropdown
-                    trigger={['click']}
-                    placement="bottomRight"
-                    overlay={
-                        context.state.showUserInfoMenu ?
-                            <Menu onClick={context.handleMenuClick}>
-                                <Menu.Item key="1">My Github</Menu.Item>
-                                <Menu.Divider />
-                                <Menu.Item key="2">Log out</Menu.Item>
-                            </Menu>
-                            :
-                            <Menu/>
-                    }>
-                    <Button
-                        className="login"
-                        onClick={context.handleLogin.bind(context)}
-                    >
-                        {(() => {
-                            return (
-                                context.state.access_token && context.state.loggedUserInfo
-                                    ?
-                                    <img
-                                        src={ context.state.loggedUserInfo.avatar_url}
-                                        alt=""
-                                    />
-                                    :
-                                    <Icon type="github"/>
-                            )
-                        })()}
-                    </Button>
-                </Dropdown>
+        return (
+            <Dropdown
+                trigger={['click']}
+                placement="bottomRight"
+                overlay={
+                    context.state.showUserInfoMenu ?
+                        <Menu onClick={context.handleMenuClick}>
+                            <Menu.Item key="1">My Github</Menu.Item>
+                            <Menu.Divider />
+                            <Menu.Item key="2">Log out</Menu.Item>
+                        </Menu>
+                        :
+                        <Menu/>
+                }>
+                <Button
+                    className="login"
+                    onClick={context.handleLogin.bind(context)}
+                >
+                    {(() => {
+                        return (
+                            context.state.access_token && context.state.loggedUserInfo
+                                ?
+                                <img
+                                    src={ context.state.loggedUserInfo.avatar_url}
+                                    alt=""
+                                />
+                                :
+                                <Icon type="github"/>
+                        )
+                    })()}
+                </Button>
+            </Dropdown>
+        )
+    }
 
-            )
-        }
-        let userInfo = () => {//top left userinfo
-            return (
-                context.state.userInfo
-                    ?
-                    <div className='userinfoContainer'>
-                        <img src={context.state.userInfo.avatar_url}
-                             alt=""
-                             className="img"/>
-                        <div className="text">
-                            {context.state.userInfo.name}
-                        </div>
+    topLeftUserInfo() {
+        let context = this;
+        return (
+            context.state.userInfo
+                ?
+                <div className='userinfoContainer'>
+                    <img src={context.state.userInfo.avatar_url}
+                         alt=""
+                         className="img"/>
+                    <div className="text">
+                        {context.state.userInfo.name}
                     </div>
-                    :
-                    <div className='userinfoContainer'>
-                        <Icon type="github" style={{fontSize: '26px', color: '#fff'}}/>
-                    </div>
-            )
-        }
-        let repoList = () => {//repolist in left sidebar
-            return context.state.repos.filter(function (repo) {
-                return context.state.enableForks ? true : (!repo.fork);
-            }).map(function (repo) {
-                return <Menu.Item key={repo.id} className="gitItem">
-                    <Icon type="github"/>
-                    <span
-                        style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',}}>
+                </div>
+                :
+                <div className='userinfoContainer'>
+                    <Icon
+                        type="github"
+                        style={{fontSize: '26px', color: '#fff'}}
+                    />
+                </div>
+        )
+    }
+
+    repoList() {
+        let context = this;
+        return context.state.repos.filter(function (repo) {
+            return context.state.enableForks ? true : (!repo.fork);
+        }).map(function (repo) {
+            return <Menu.Item key={repo.id} className="gitItem">
+                <Icon type="github"/>
+                <span
+                    style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',}}>
                         {repo.name}
                     </span>
-                </Menu.Item>
+            </Menu.Item>
+        })
+    }
+
+    contributorsSnippet() {
+        let context = this;
+        return (
+            context.state.contributors.map(function (item) {
+                let randomColor = '#' + ('00000' + (Math.random() * 0x1000000 << 0).toString(16)).slice(-6)
+                let textColor = context.reversalColor(randomColor)
+                // console.log(randomColor, textColor)
+                return <div
+                    key={item.id}
+                    className="tag"
+                    style={{backgroundColor: randomColor, color: textColor, borderColor: textColor}}
+                    onClick={context.goToGithubUser.bind(context, item)}
+                >
+                    <img className="avatar" src={item.avatar_url} alt=""/>
+                    {item.login}
+                </div>
             })
-        }
+        )
+    }
 
-        let contributorsSnippet = () => {//contributors of repo in a pane
-            return (
-                context.state.contributors.map(function (item) {
-                    let randomColor = '#' + ('00000' + (Math.random() * 0x1000000 << 0).toString(16)).slice(-6)
-                    let textColor = context.reversalColor(randomColor)
-                    // console.log(randomColor, textColor)
-                    return <div
-                        key={item.id}
-                        className="tag"
-                        style={{backgroundColor: randomColor, color: textColor, borderColor: textColor}}
-                        onClick={context.goToGithubUser.bind(context, item)}
-                    >
-                        <img className="avatar" src={item.avatar_url} alt=""/>
-                        {item.login}
+    onWatch(user) {
+        let context = this;
+        if (this.state.access_token && this.state.loggedUserInfo) {
+            let url = context.state.repoSelected.owner.following_url
+                .replace("{/other_user}", "/" + context.state.loggedUserInfo.login)
+                .replace("{/repo}", "/" + context.state.userInfo.name)
+            console.log(url)
+            fetch(url
+                // + "?access_token=" + context.state.access_token
+                , {
+                method: 'GET',
+            }).then(function (res) {
+                if (res.status == 200) {
+                    res.json().then(function (json) {
+                        console.log('onWatch', json)
+                    })
+                } else {
+                }
+            }).catch(function (error) {
+                console.log(error)
+            });
+        }
+    }
+
+    onStar(user) {
+        let context = this;
+        if (this.state.access_token && this.state.loggedUserInfo) {
+            let url = context.state.repoSelected.owner.starred_url
+                .replace("{/owner}", "/" + context.state.loggedUserInfo.login)
+                .replace("{/repo}","/"+context.state.repoSelected.name)
+            console.log(url)
+            fetch(url
+                + "?access_token=" + context.state.access_token
+                , {
+                method: 'GET',
+            }).then(function (res) {
+                if (res.status == 200) {
+                    res.json().then(function (json) {
+                        console.log('onStar', json)
+                    })
+                } else {
+                }
+            }).catch(function (error) {
+                console.log(error)
+            });
+        }
+    }
+
+    onFork(user) {
+
+    }
+
+    //pane in tab
+    paneSnippet(key) {
+        let context = this;
+        let repo = context.state.repos.filter(function (element) {
+            return element.id == key
+        })[0]
+        return (
+            <div className='paneContainer'>
+
+                <div className="contentHead">
+                    <div className="leftFloat">
+                        <ButtonGroup>
+                            <Button >Language</Button>
+                            <Button type="primary">{repo.language ? repo.language : 'Unknow'}</Button>
+                        </ButtonGroup>
                     </div>
-                })
-            )
-        }
-
-        let paneSnippet = (key) => {//pane in tab
-            let repo = context.state.repos.filter(function (element) {
-                return element.id == key
-            })[0]
-            // console.log(repo, repo.description, repo.name)
-            return (
-                <div className='paneContainer'>
-
-                    <div className="contentHead">
-                        <div className="leftFloat">
-                            <ButtonGroup>
-                                <Button >Language</Button>
-                                <Button type="primary">{repo.language ? repo.language : 'Unknow'}</Button>
-                            </ButtonGroup>
-                        </div>
-                        <div className="rightFloat">
+                    <div className="rightFloat">
+                        <ButtonGroup>
+                            <Button icon="eye" onClick={context.onWatch.bind(context)}>Watch</Button>
                             <Popover
                                 placement="topRight"
                                 title="Title" trigger="click"
@@ -445,11 +520,11 @@ class App extends Component {
                                     })
                                 }
                             >
-                                <ButtonGroup>
-                                    <Button icon="eye">Watch</Button>
-                                    <Button type="primary">{repo.watchers_count}</Button>
-                                </ButtonGroup>
+                                <Button type="primary">{repo.watchers_count}</Button>
                             </Popover>
+                        </ButtonGroup>
+                        <ButtonGroup>
+                            <Button icon="star" onClick={context.onStar.bind(context)}>Star</Button>
                             <Popover
                                 placement="topRight"
                                 title="Title" trigger="click"
@@ -466,11 +541,11 @@ class App extends Component {
                                     })
                                 }
                             >
-                                <ButtonGroup>
-                                    <Button icon="star">Star</Button>
-                                    <Button type="primary">{repo.stargazers_count}</Button>
-                                </ButtonGroup>
+                                <Button type="primary">{repo.stargazers_count}</Button>
                             </Popover>
+                        </ButtonGroup>
+                        <ButtonGroup>
+                            <Button icon="fork" onClick={context.onFork.bind(context)}>Fork</Button>
                             <Popover
                                 placement="topRight"
                                 title="Title" trigger="click"
@@ -487,43 +562,51 @@ class App extends Component {
                                     })
                                 }
                             >
-                                <ButtonGroup>
-                                    <Button icon="fork">Fork</Button>
-                                    <Button type="primary">{repo.forks_count}</Button>
-                                </ButtonGroup>
+                                <Button type="primary">{repo.forks_count}</Button>
                             </Popover>
-                            <Button icon='download' style={{marginLeft: '4px'}}>Download</Button>
-                        </div>
+                        </ButtonGroup>
+                        <Button icon='download' style={{marginLeft: '4px'}}>Download</Button>
                     </div>
-                    <div className="contentBody">
-                        {(() => {
-                            return context.state.contributors.length > 0 ?
-                                <div className="contributors">
-                                    <p style={{fontSize: '22px'}}>Contributors:</p>
-                                    <div className="tags">
-                                        {contributorsSnippet()}
-                                    </div>
+                </div>
+                <div className="contentBody">
+                    {(() => {
+                        return context.state.contributors.length > 0 ?
+                            <div className="contributors">
+                                <p style={{fontSize: '22px'}}>Contributors:</p>
+                                <div className="tags">
+                                    {context.contributorsSnippet()}
                                 </div>
-                                :
-                                null
-                        })()}
+                            </div>
+                            :
+                            null
+                    })()}
 
-                        <div className="description">
-                            {repo.description}
-                            <p></p>
-                            <ReactMarkdown source={context.state.readme ? context.state.readme : ""}/>
-                        </div>
+                    <div className="description">
+                        {repo.description}
+                        <p></p>
+                        <ReactMarkdown source={context.state.readme ? context.state.readme : ""}/>
                     </div>
+                </div>
 
-                </div >
-            )
-        }
+            </div >
+        )
+    }
 
+    render() {
+        let context = this;
+        //the floating login btn locating at the top right corner
+        context.loginFloatBtn()
+        //top left userinfo
+        context.topLeftUserInfo()
+        //repolist in left sidebar
+        context.repoList()
+        //contributors of repo in a pane
+        context.contributorsSnippet()
         return (
             <div className="view">
                 <div className="viewWrap">
                     <div className="userinfo" onClick={context.goToGithub.bind(context)}>
-                        {userInfo()}
+                        {context.topLeftUserInfo()}
                     </div>
                     <div className='sidebar'>
                         <div className='searchGithub'>
@@ -563,12 +646,11 @@ class App extends Component {
                         </div>
                         <Menu mode="vertical" style={{backgroundColor: 'transparent'}}
                               onClick={context.handleRepoClick.bind(context)}>
-                            {repoList()}
+                            {context.repoList()}
                         </Menu>
                     </div>
                 </div>
                 <div className="container">
-
                     <Tabs
                         className='tabpane'
                         hideAdd
@@ -580,11 +662,12 @@ class App extends Component {
                                 });
                                 if (repo.length > 0) {
                                     repo = repo[0]
-                                    context.getRepoContributors(repo.contributors_url+"?access_token="+context.state.access_token)
-                                    context.getRepoReadme(repo.contents_url+"?access_token="+context.state.access_token)
-                                    context.getStargazers(repo.stargazers_url+"?access_token="+context.state.access_token)
-                                    context.getFork(repo.forks_url+"?access_token="+context.state.access_token)
-                                    context.getWatchers(repo.url+"/watchers"+"?access_token="+context.state.access_token)
+                                    context.setState({repoSelected:repo})
+                                    context.getRepoContributors(repo.contributors_url + "?access_token=" + context.state.access_token)
+                                    context.getRepoReadme(repo.contents_url + "?access_token=" + context.state.access_token)
+                                    context.getStargazers(repo.stargazers_url + "?access_token=" + context.state.access_token)
+                                    context.getFork(repo.forks_url + "?access_token=" + context.state.access_token)
+                                    context.getWatchers(repo.url + "/watchers" + "?access_token=" + context.state.access_token)
                                 }
                             }
                         }
@@ -597,20 +680,17 @@ class App extends Component {
                         }
                         animated={{inkBar: true, tabPane: true}}
                     >
-
                         {this.state.panes.map(pane =>
                             <TabPane tab={pane.title}
                                      key={pane.key}>
-                                {paneSnippet(pane.key)}
+                                {context.paneSnippet(pane.key)}
                             </TabPane>)
                         }
                     </Tabs>
                 </div>
-                {loginFloatBtn()}
+                {context.loginFloatBtn()}
             </div>
         );
     }
-
 }
-
 export default App;
